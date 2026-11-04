@@ -62,16 +62,18 @@ def main():
 
             cv2.imshow("HandTracking", image)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            if cv2.getWindowProperty("HandTracking", cv2.WND_PROP_VISIBLE) < 1 :
+            touche = cv2.waitKey(1) & 0xFF
+            if touche == ord('q'):
                 break
 
-            if cv2.waitKey(1) & 0xFF == ord('f'):
+            if touche == ord('f'):
                 if afficher_doigts:
                     afficher_doigts = False
                 else:
                     afficher_doigts = True
+
+            if cv2.getWindowProperty("HandTracking", cv2.WND_PROP_VISIBLE) < 1 :
+                break
 
     video.release()
     cv2.destroyAllWindows()
