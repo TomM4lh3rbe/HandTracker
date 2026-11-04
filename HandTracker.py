@@ -36,6 +36,13 @@ def dessiner_ancrage(image, centre):
 
 def dessiner_rectangle(image, point1, point2, couleur):
     cv2.rectangle(image, point1, point2, couleur, 2)
+    largeur = abs(point1[0] - point2[0])
+    hauteur = abs(point1[1] - point2[1])
+    x = max(point1[0], point2[0])
+    y = max(point1[1], point2[1])
+
+    cv2.putText(image, f"{largeur} x {hauteur}", (x - 125, y + 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
 #Lancement du programme
 def main():
