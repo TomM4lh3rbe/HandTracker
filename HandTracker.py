@@ -29,6 +29,9 @@ def main():
         image = cv2.flip(image, 1)
         cv2.imshow("HandTracking", image)
 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
     video.release()
     cv2.destroyAllWindows()
 
