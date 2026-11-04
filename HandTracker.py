@@ -15,24 +15,37 @@ video.set(4, 720)
 
 #Lancement du programme
 def main():
-    while True:
-        essaie = 0
-        succes, image = video.read()
-        while not succes and essaie < 5 :
-            time.sleep(0.2)
+    with mp_hands.Hands(
+        max_num_hands=2,
+        min_detection_confidence=0.7,
+        min_tracking_confidence=0.7
+    ) as hands:
+        while True:
+            essaie = 0
             succes, image = video.read()
-            essaie += 1
-        if not succes:
-            print("Impossible de récuperer l'image")
-            break
+            while not succes and essaie < 5 :
+                time.sleep(0.2)
+                succes, image = video.read()
+                essaie += 1
+            if not succes:
+                print("Impossible de récuperer l'image")
+                break
 
-        image = cv2.flip(image, 1)
-        cv2.imshow("HandTracking", image)
+            image = cv2.flip(image, 1)
+            hauteur, largeur, couleurs = image.shape
+            rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            resultat = hands.process(rgb)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-        if cv2.getWindowProperty("HandTracking", cv2.WND_PROP_VISIBLE) < 1 :
-            break
+            if resultat.multi_hand_landmarks:
+                for hand_landmarks in resultat.multi_hand_landmarks:
+                    mp_draw.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+            cv2.imshow("HandTracking", image)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+            if cv2.getWindowProperty("HandTracking", cv2.WND_PROP_VISIBLE) < 1 :
+                break
 
     video.release()
     cv2.destroyAllWindows()
