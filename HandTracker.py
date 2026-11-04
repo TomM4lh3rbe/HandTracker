@@ -41,17 +41,23 @@ def main():
             if resultat.multi_hand_landmarks:
                 for hand_landmarks in resultat.multi_hand_landmarks:
                     mp_draw.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-                    if afficher_doigts :
-                        doigts_desc = {
-                            "Pouce": hand_landmarks.landmark[4],
-                            "Index": hand_landmarks.landmark[8],
-                            "Majeur": hand_landmarks.landmark[12],
-                            "Annulaire": hand_landmarks.landmark[16],
-                            "Auriculaire": hand_landmarks.landmark[20],
-                        }
+
+                    doigts_desc = {
+                        "Pouce": hand_landmarks.landmark[4],
+                        "Index": hand_landmarks.landmark[8],
+                        "Majeur": hand_landmarks.landmark[12],
+                        "Annulaire": hand_landmarks.landmark[16],
+                        "Auriculaire": hand_landmarks.landmark[20],
+                    }
+                    if afficher_doigts:
                         for nom, point in doigts_desc.items():
                             x, y = int(point.x * largeur), int(point.y * hauteur)
                             cv2.putText(image, nom, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+
+                    for nom, point in doigts_desc.items():
+                        x, y = int(point.x * largeur), int(point.y * hauteur)
+                        cv2.circle(image, (x,y),3,(0,255,0),10)
+
 
 
             cv2.imshow("HandTracking", image)
