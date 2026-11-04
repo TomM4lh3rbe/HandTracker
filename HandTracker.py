@@ -52,7 +52,7 @@ def main():
                     if afficher_doigts:
                         for nom, point in doigts_desc.items():
                             x, y = int(point.x * largeur), int(point.y * hauteur)
-                            cv2.putText(image, nom, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
+                            cv2.putText(image, nom, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
 
                     for nom, point in doigts_desc.items():
                         x, y = int(point.x * largeur), int(point.y * hauteur)
