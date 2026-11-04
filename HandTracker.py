@@ -56,7 +56,7 @@ def main():
 
                     for nom, point in doigts_desc.items():
                         x, y = int(point.x * largeur), int(point.y * hauteur)
-                        cv2.circle(image, (x,y),3,(0,255,0),10)
+                        cv2.circle(image, (x,y),5,(0,255,0),-1)
 
 
 
