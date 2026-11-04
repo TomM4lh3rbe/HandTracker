@@ -31,6 +31,8 @@ def main():
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        if cv2.getWindowProperty("HandTracking", cv2.WND_PROP_VISIBLE) < 1 :
+            break
 
     video.release()
     cv2.destroyAllWindows()
