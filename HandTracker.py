@@ -14,6 +14,10 @@ video = cv2.VideoCapture(0)
 video.set(3, 1280) # Résolution de la vidéo
 video.set(4, 720)
 
+#Couleurs
+COULEUR_CONTOUR = (252, 211, 125)
+COULEUR_ANCRAGE = (246, 130, 59)
+
 # Calcule du pincement du pouce et de l'index
 def calculer_pincement(hand_landmarks, largeur, hauteur):
     pouce = hand_landmarks.landmark[4]
@@ -26,6 +30,12 @@ def calculer_pincement(hand_landmarks, largeur, hauteur):
     milieu = (int((pouce.x + index.x) / 2 * largeur),
               int((pouce.y + index.y) / 2 * hauteur))
     return est_pince, milieu
+#Dessins
+def dessiner_ancrage(image, centre):
+    cv2.circle(image, centre, 10, COULEUR_ANCRAGE, 3)
+
+def dessiner_rectangle(image, point1, point2, couleur):
+    cv2.rectangle(image, point1, point2, couleur, 2)
 
 #Lancement du programme
 def main():
@@ -78,9 +88,9 @@ def main():
                     if est_pince:
                         ancrages.append(milieu)
             for point in ancrages:
-                cv2.circle(image, point, 12, (255, 0, 0), -1)
+                dessiner_ancrage(image, point)
             if len(ancrages) == 2:
-                cv2.rectangle(image, ancrages[0], ancrages[1], (255, 0, 0), 2)
+                dessiner_rectangle(image, ancrages[0], ancrages[1], COULEUR_CONTOUR)
 
             cv2.imshow("HandTracking", image)
 
