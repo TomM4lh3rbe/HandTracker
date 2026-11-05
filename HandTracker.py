@@ -19,7 +19,7 @@ COULEUR_CONTOUR = (252, 211, 125)
 COULEUR_ANCRAGE = (246, 130, 59)
 
 # Calcule du pincement du pouce et de l'index
-def calculer_pincement(hand_landmarks, largeur, hauteur):
+def ancrage(hand_landmarks, largeur, hauteur):
     pouce = hand_landmarks.landmark[4]
     index = hand_landmarks.landmark[8]
 
@@ -30,6 +30,17 @@ def calculer_pincement(hand_landmarks, largeur, hauteur):
     milieu = (int((pouce.x + index.x) / 2 * largeur),
               int((pouce.y + index.y) / 2 * hauteur))
     return est_pince, milieu
+
+#Calculer le pincement du pouce et de l'auriculaire
+def mode(hand_landmarks, largeur, hauteur):
+    pouce = hand_landmarks.landmark[4]
+    auriculaire = hand_landmarks.landmark[20]
+
+    distance = math.hypot((pouce.x - auriculaire.x) * largeur,
+                          (pouce.y - auriculaire.y) * hauteur)
+    est_pince = distance < 100
+    return est_pince
+
 #Dessins
 def dessiner_ancrage(image, centre):
     cv2.circle(image, centre, 10, COULEUR_ANCRAGE, 3)
@@ -48,6 +59,8 @@ def dessiner_rectangle(image, point1, point2, couleur):
 def main():
     afficher_doigts = False
     afficher_armature = True
+    dessin_mode = ["Rien", "Noir-Blanc"]
+    dessin_index = 0
     with mp_hands.Hands(
         max_num_hands=2,
         min_detection_confidence=0.7,
@@ -93,9 +106,12 @@ def main():
                             x, y = int(point.x * largeur), int(point.y * hauteur)
                             cv2.circle(image, (x,y),5,(0,255,0),-1)
 
-                    est_pince, milieu = calculer_pincement(hand_landmarks, largeur, hauteur)
+                    est_pince, milieu = ancrage(hand_landmarks, largeur, hauteur)
                     if est_pince:
                         ancrages.append(milieu)
+                    mode_switcher = mode(hand_landmarks, largeur, hauteur)
+                    if mode_switcher == True:
+                        dessin_index = dessin_index + 1 % len(dessin_mode)
             if afficher_armature == True:
                 for point in ancrages:
                     dessiner_ancrage(image, point)
