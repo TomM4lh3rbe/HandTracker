@@ -47,6 +47,7 @@ def dessiner_rectangle(image, point1, point2, couleur):
 #Lancement du programme
 def main():
     afficher_doigts = False
+    afficher_armature = True
     with mp_hands.Hands(
         max_num_hands=2,
         min_detection_confidence=0.7,
@@ -73,7 +74,8 @@ def main():
 
             if resultat.multi_hand_landmarks:
                 for hand_landmarks in resultat.multi_hand_landmarks:
-                    mp_draw.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+                    if afficher_armature == True:
+                        mp_draw.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
                     doigts_desc = {
                         "Pouce": hand_landmarks.landmark[4],
@@ -86,16 +88,17 @@ def main():
                         for nom, point in doigts_desc.items():
                             x, y = int(point.x * largeur), int(point.y * hauteur)
                             cv2.putText(image, nom, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255), 2)
-
-                    for nom, point in doigts_desc.items():
-                        x, y = int(point.x * largeur), int(point.y * hauteur)
-                        cv2.circle(image, (x,y),5,(0,255,0),-1)
+                    if afficher_armature == True:
+                        for nom, point in doigts_desc.items():
+                            x, y = int(point.x * largeur), int(point.y * hauteur)
+                            cv2.circle(image, (x,y),5,(0,255,0),-1)
 
                     est_pince, milieu = calculer_pincement(hand_landmarks, largeur, hauteur)
                     if est_pince:
                         ancrages.append(milieu)
-            for point in ancrages:
-                dessiner_ancrage(image, point)
+            if afficher_armature == True:
+                for point in ancrages:
+                    dessiner_ancrage(image, point)
             if len(ancrages) == 2:
                 dessiner_rectangle(image, ancrages[0], ancrages[1], COULEUR_CONTOUR)
 
@@ -110,6 +113,13 @@ def main():
                     afficher_doigts = False
                 else:
                     afficher_doigts = True
+
+            if touche == ord("a"):
+                if afficher_armature == True:
+                    afficher_armature = False
+                else:
+                    afficher_armature = True
+
 
             if cv2.getWindowProperty("HandTracking", cv2.WND_PROP_VISIBLE) < 1 :
                 break
